@@ -1,24 +1,31 @@
+// SERVER-IPADDRESS, ACTION1-UUID, ACTION1-TOKEN is value
+// sample values↓
+// SERVER-IPADDRESS: 210.140.175.00
+// ACTION1-UUID: 88d6d5f5-9553-456f-9264-389xxxxxxxx
+// ACTION1-TOKEN: a828xxxxx
+
 #include <Bridge.h>
 #include <YunMQTTClient.h>
+
 
 YunMQTTClient client;
 
 void setup() {
   Bridge.begin();
   SerialUSB.begin(57600);
-  client.begin("YOUR-SERVER-IPADDRESS");
+  client.begin("SERVER-IPADDRESS");
   connect();
 }
 
 void connect() {
   SerialUSB.print("connecting...");
-  while (!client.connect("arduino", "YOUR-AID", "YOUR-AID")) {
+  while (!client.connect("arduino", "ACTION1-UUID", "ACTION1-TOKEN")) {
     SerialUSB.print(".");
     delay(500);
   }
 
   SerialUSB.println("\nconnected!");
-  client.subscribe("YOUR-AID");
+  client.subscribe("ACTION1-UUID");
 }
 
 void loop() {
@@ -26,7 +33,6 @@ void loop() {
   if(!client.connected()) {
     connect();
   }
-
 }
 
 void messageReceived(String topic, String payload, char * bytes, unsigned int length) {
@@ -40,5 +46,4 @@ void messageReceived(String topic, String payload, char * bytes, unsigned int le
   {
     SerialUSB.println("start something");
   }
-
 }
