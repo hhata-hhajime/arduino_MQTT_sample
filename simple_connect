@@ -1,0 +1,44 @@
+#include <Bridge.h>
+#include <YunMQTTClient.h>
+
+YunMQTTClient client;
+
+void setup() {
+  Bridge.begin();
+  SerialUSB.begin(57600);
+  client.begin("YOUR-SERVER-IPADDRESS");
+  connect();
+}
+
+void connect() {
+  SerialUSB.print("connecting...");
+  while (!client.connect("arduino", "YOUR-AID", "YOUR-AID")) {
+    SerialUSB.print(".");
+    delay(500);
+  }
+
+  SerialUSB.println("\nconnected!");
+  client.subscribe("YOUR-AID");
+}
+
+void loop() {
+  client.loop();
+  if(!client.connected()) {
+    connect();
+  }
+
+}
+
+void messageReceived(String topic, String payload, char * bytes, unsigned int length) {
+  SerialUSB.print("messageReceived: ");
+  SerialUSB.print(topic);
+  SerialUSB.print(" - ");
+  SerialUSB.print(payload);
+  SerialUSB.println();
+
+  if(payload.indexOf("connect_to_arduino") > 0)
+  {
+    SerialUSB.println("start something");
+  }
+
+}
